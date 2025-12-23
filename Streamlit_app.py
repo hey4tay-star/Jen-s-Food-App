@@ -55,15 +55,20 @@ if search_query:
 if filtered_df.empty:
     st.write("No recipes found. Try a different search!")
 else:
-    # Create a grid of 3 columns
     cols = st.columns(3)
     for index, (i, row) in enumerate(filtered_df.iterrows()):
         with cols[index % 3]:
-            # This creates a "Polaroid" style card
-            st.image(row['Image URL'], use_container_width=True)
+            # This 'if' check prevents the crash if the URL is missing
+            if pd.notna(row['Image URL']) and str(row['Image URL']).startswith('http'):
+                st.image(row['Image URL'], use_container_width=True)
+            else:
+                # This shows a placeholder if you forgot a link
+                st.warning("📸 No photo added yet!")
+            
             st.subheader(row['Dish'])
             st.caption(f"🏷️ {row['Category']}")
             if pd.notna(row['Notes']):
                 st.write(f"*{row['Notes']}*")
             st.markdown("---")
+            
           
