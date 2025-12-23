@@ -14,7 +14,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("📖 Our Family Cookbook")
+st.title("📖 Jen's Cookbook")
 
 # --- 2. THE CONNECTION (Data) ---
 # We pull the URL from your Secret settings for security
