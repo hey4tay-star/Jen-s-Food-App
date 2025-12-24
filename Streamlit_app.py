@@ -31,66 +31,50 @@ df.columns = df.columns.str.strip().str.capitalize()
 # This shuffles the order EVERY time the app is opened
 df = df.sample(frac=1).reset_index(drop=True)
 
-# --- 3. THE SIDEBAR (Filters & Surprise) ---
-st.sidebar.header("Cooking Tools")
-
-# Initialize a 'placeholder' for the surprise recipe so it doesn't disappear
+# --- 3. THE SURPRISE SECTION (Main Page) ---
+# This stays on the main screen, not in the sidebar
 if 'surprise_recipe' not in st.session_state:
     st.session_state.surprise_recipe = None
 
-if st.sidebar.button("✨ Surprise Me!"):
-    st.session_state.surprise_recipe = df.sample(n=1).iloc[0]
-    st.balloons()
-    
-    # NEW: This bit of "magic" tells the sidebar to close itself
-    st.markdown(
-        """
-        <script>
-            var sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
-            var button = window.parent.document.querySelector('button[kind="header"]');
-            if (sidebar && window.innerWidth < 768) {
-                button.click();
-            }
-        </script>
-        """,
-        unsafe_allow_html=True,
-    )
-    # Note: Streamlit's newer versions sometimes handle this via configuration. 
-    # If the script above is blocked by your browser, we can use the "Manual" 
-    # approach of just making the surprise result very large at the top!
+col_btn, col_empty = st.columns([1, 2])
 
-# If a surprise recipe has been picked, show it at the very top of the main page
+with col_btn:
+    if st.button("✨ Surprise Me!", use_container_width=True):
+        st.session_state.surprise_recipe = df.sample(n=1).iloc[0]
+        st.balloons()
+
 if st.session_state.surprise_recipe is not None:
     recipe = st.session_state.surprise_recipe
-    st.markdown("### 🌟 Your Random Suggestion")
-    with st.container():
-        col1, col2 = st.columns([1, 2])
-        with col1:
-            if pd.notna(recipe['Image url']) and str(recipe['Image url']).startswith('http'):
-                st.image(recipe['Image url'], use_container_width=True)
-        with col2:
-            st.subheader(recipe['Dish'])
-            st.write(f"🏷️ {recipe['Category']}")
-            if pd.notna(recipe['Notes']):
-                st.info(recipe['Notes'])
-        if st.button("Clear Surprise"):
+    st.markdown("""
+        <div style="background-color: #ffffff; padding: 20px; border-radius: 15px; border: 2px solid #e6e6e6; margin-bottom: 20px;">
+            <h3 style="margin-top: 0; color: #2c3e50;">🌟 How about this?</h3>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        if pd.notna(recipe['Image url']) and str(recipe['Image url']).startswith('http'):
+            st.image(recipe['Image url'], use_container_width=True)
+    with col2:
+        st.header(recipe['Dish'])
+        st.write(f"🏷️ **Category:** {recipe['Category']}")
+        if pd.notna(recipe['Notes']):
+            st.info(f"💡 {recipe['Notes']}")
+        if st.button("Close Suggestion ✕"):
             st.session_state.surprise_recipe = None
             st.rerun()
     st.markdown("---")
 
-st.sidebar.write("---")
-st.sidebar.header("Filter by Category")
+# --- 4. THE FILTERS (Cleanly in the Sidebar) ---
+st.sidebar.header("🔍 Find a Recipe")
 
-# Generate unique tags for the filter
 all_tags = []
 for val in df['Category'].dropna():
     all_tags.extend([tag.strip() for tag in str(val).split(',')])
 unique_tags = sorted(list(set(all_tags)))
 
-selected_categories = st.sidebar.multiselect("Pick categories:", unique_tags)
-
-# --- 4. THE SEARCH BAR ---
-search_query = st.text_input("Or search for a specific dish:", placeholder="e.g., Chicken")
+selected_categories = st.sidebar.multiselect("Filter by Category:", unique_tags)
+search_query = st.sidebar.text_input("Search by Name:", placeholder="e.g. Pasta")
 
 # --- 5. THE FILTERING LOGIC ---
 filtered_df = df.copy()
