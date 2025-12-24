@@ -8,9 +8,13 @@ st.set_page_config(page_title="Her Recipe Gallery", layout="wide")
 # This adds the "Paper & Ink" look
 st.markdown("""
     <style>
-    .main { background-color: #fdfaf0; } /* Creamy paper color */
-    h1 { color: #2c3e50; font-family: 'Georgia', serif; }
-    .stTextInput > div > div > input { background-color: #ffffff; border-radius: 10px; }
+    /* This makes the app feel like a recipe card */
+    .stApp {
+        background-color: #fdfaf0;
+    }
+    .stHeader {
+        background-color: rgba(0,0,0,0);
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -37,6 +41,23 @@ if 'surprise_recipe' not in st.session_state:
 if st.sidebar.button("✨ Surprise Me!"):
     st.session_state.surprise_recipe = df.sample(n=1).iloc[0]
     st.balloons()
+    
+    # NEW: This bit of "magic" tells the sidebar to close itself
+    st.markdown(
+        """
+        <script>
+            var sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
+            var button = window.parent.document.querySelector('button[kind="header"]');
+            if (sidebar && window.innerWidth < 768) {
+                button.click();
+            }
+        </script>
+        """,
+        unsafe_allow_html=True,
+    )
+    # Note: Streamlit's newer versions sometimes handle this via configuration. 
+    # If the script above is blocked by your browser, we can use the "Manual" 
+    # approach of just making the surprise result very large at the top!
 
 # If a surprise recipe has been picked, show it at the very top of the main page
 if st.session_state.surprise_recipe is not None:
