@@ -33,8 +33,13 @@ st.markdown(
         margin-bottom: 0;
     }}
     </style>
-
-st.title("📖 Jen's Cookbook")
+    
+    <div class="header-container">
+        <h1>Jen's Cookbook</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # --- 2. THE CONNECTION (Data) ---
 url = st.secrets["gsheets_url"]
