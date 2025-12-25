@@ -11,17 +11,28 @@ st.set_page_config(
 )
 
 # This adds the "Paper & Ink" look
-st.markdown("""
+# --- HEADER WITH BACKGROUND IMAGE ---
+banner_image_url = "https://i.postimg.cc/v841zM02/20230823-132532-2.jpg"
+
+st.markdown(
+    f"""
     <style>
-    /* This makes the app feel like a recipe card */
-    .stApp {
-        background-color: #fdfaf0;
-    }
-    .stHeader {
-        background-color: rgba(0,0,0,0);
-    }
+    .header-container {{
+        background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url("{banner_image_url}");
+        background-size: cover;
+        background-position: center;
+        padding: 60px 20px;
+        border-radius: 15px;
+        text-align: center;
+        color: white;
+        margin-bottom: 30px;
+    }}
+    .header-container h1 {{
+        font-family: 'Playfair Display', serif;
+        font-size: 3rem;
+        margin-bottom: 0;
+    }}
     </style>
-    """, unsafe_allow_html=True)
 
 st.title("📖 Jen's Cookbook")
 
