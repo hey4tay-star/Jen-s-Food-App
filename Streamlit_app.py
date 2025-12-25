@@ -3,7 +3,12 @@ import pandas as pd
 from streamlit_gsheets import GSheetsConnection
 
 # --- 1. SETTING THE MOOD (Visuals) ---
-st.set_page_config(page_title="Her Recipe Gallery", layout="wide")
+st.set_page_config(
+    page_title="The Jen Cookbook", # Put the EXACT name you want here
+    page_icon="🍳", 
+    layout="wide", 
+    initial_sidebar_state="collapsed"
+)
 
 # This adds the "Paper & Ink" look
 st.markdown("""
